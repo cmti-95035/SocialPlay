@@ -1,23 +1,3 @@
-/**
- * Copyright (c) 2014-present, Facebook, Inc. All rights reserved.
- *
- * You are hereby granted a non-exclusive, worldwide, royalty-free license to use,
- * copy, modify, and distribute this software in source code or binary form for use
- * in connection with the web services and APIs provided by Facebook.
- *
- * As with any software that integrates with the Facebook platform, your use of
- * this software is subject to the Facebook Developer Principles and Policies
- * [http://developers.facebook.com/policy/]. This copyright notice shall be
- * included in all copies or substantial portions of the software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 package com.peets.socialplay;
 
 import android.os.Bundle;
@@ -33,18 +13,15 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.CallbackManager;
 
-import org.opencv.samples.ballDetector.R;
+import com.peets.socialplay.R;
 
 public class MainActivity extends FragmentActivity {
-
-    private static final String USER_SKIPPED_LOGIN_KEY = "user_skipped_login";
 
     private static final int SPLASH = 0;
     private static final int FRAGMENT_COUNT = SPLASH +1;
 
     private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
     private boolean isResumed = false;
-    private boolean userSkippedLogin = false;
     private AccessTokenTracker accessTokenTracker;
     private CallbackManager callbackManager;
 
@@ -54,12 +31,7 @@ public class MainActivity extends FragmentActivity {
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 
-        try{
-            Thread.sleep(10000);
-        }catch (Exception ex){}
-
         if (savedInstanceState != null) {
-            userSkippedLogin = savedInstanceState.getBoolean(USER_SKIPPED_LOGIN_KEY);
         }
         callbackManager = CallbackManager.Factory.create();
 
@@ -93,14 +65,6 @@ public class MainActivity extends FragmentActivity {
             transaction.hide(fragments[i]);
         }
         transaction.commit();
-
-        splashFragment.setSkipLoginCallback(new SplashFragment.SkipLoginCallback() {
-            @Override
-            public void onSkipLoginPressed() {
-                userSkippedLogin = true;
-                showFragment(SPLASH, false);
-            }
-        });
     }
 
     @Override
@@ -140,35 +104,24 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        outState.putBoolean(USER_SKIPPED_LOGIN_KEY, userSkippedLogin);
     }
 
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
 
-        if (AccessToken.getCurrentAccessToken() != null) {
-            // if the user already logged in, try to show the selection fragment
-            showFragment(SPLASH, false);
-            userSkippedLogin = false;
-        } else if (userSkippedLogin) {
-            showFragment(SPLASH, false);
+        AccessToken token = AccessToken.getCurrentAccessToken();
+        if (token != null) {
+            // if the user already logged in, proceed to the TreasureHunt screen
+            Intent intent = new Intent(getApplicationContext(), TreasureHuntActivity.class);
+
+            startActivity(intent);
+
         } else {
             // otherwise present the splash screen and ask the user to login,
-            // unless the user explicitly skipped.
             showFragment(SPLASH, false);
         }
     }
-
-    public void showSettingsFragment() {
-        showFragment(SPLASH, true);
-    }
-
-    public void showSplashFragment() {
-        showFragment(SPLASH, true);
-    }
-
 
     private void showFragment(int fragmentIndex, boolean addToBackStack) {
         FragmentManager fm = getSupportFragmentManager();

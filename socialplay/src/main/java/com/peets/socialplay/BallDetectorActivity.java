@@ -11,7 +11,6 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.facebook.FacebookSdk;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
@@ -62,9 +61,9 @@ public class BallDetectorActivity extends Activity implements CvCameraViewListen
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        setContentView(org.opencv.samples.ballDetector.R.layout.balldetector_surface_view);
+        setContentView(com.peets.socialplay.R.layout.balldetector_surface_view);
 
-        mOpenCvCameraView = (BallDetectorView) findViewById(org.opencv.samples.ballDetector.R.id.balldetector_activity_java_surface_view);
+        mOpenCvCameraView = (BallDetectorView) findViewById(com.peets.socialplay.R.id.balldetector_activity_java_surface_view);
 
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 

@@ -38,7 +38,7 @@
         android:layout_weight="9"
         android:orientation="horizontal" >
 
-        <com.dominio.fabio.balldetectordemo.BallDetectorView
+        <com.peets.socialplay.BallDetectorView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"

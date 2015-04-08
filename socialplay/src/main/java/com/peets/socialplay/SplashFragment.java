@@ -15,18 +15,12 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-import org.opencv.samples.ballDetector.R;
+import com.peets.socialplay.R;
 
 public class SplashFragment extends Fragment {
 
     private LoginButton loginButton;
-    private TextView skipLoginButton;
-    private SkipLoginCallback skipLoginCallback;
     private CallbackManager callbackManager;
-
-    public interface SkipLoginCallback {
-        void onSkipLoginPressed();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,16 +47,6 @@ public class SplashFragment extends Fragment {
             }
         });
 
-        skipLoginButton = (TextView) view.findViewById(R.id.skip_login_button);
-        skipLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (skipLoginCallback != null) {
-                    skipLoginCallback.onSkipLoginPressed();
-                }
-            }
-        });
-
         return view;
     }
 
@@ -70,10 +54,6 @@ public class SplashFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public void setSkipLoginCallback(SkipLoginCallback callback) {
-        skipLoginCallback = callback;
     }
 
 }

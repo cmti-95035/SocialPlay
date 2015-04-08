@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import org.opencv.samples.ballDetector.R;
+import com.peets.socialplay.R;
 
 /*
  * the main activity to host the webRTC connectivity

@@ -33,7 +33,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
-import org.opencv.samples.ballDetector.R;
+import com.peets.socialplay.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -164,8 +164,6 @@ public class GuidedPlayActivity extends Activity implements CvCameraViewListener
 
     private void wonChallenge() {
         foundInstanceCount = 0;
-//        String caption = "You found it! Win 10 Points!";
-//        Toast.makeText(this, caption, Toast.LENGTH_SHORT).show();
         mp = MediaPlayer.create(this, R.raw.youwon);
         long duration = (long) mp.getDuration() + 500;
         mp.start();
@@ -173,12 +171,6 @@ public class GuidedPlayActivity extends Activity implements CvCameraViewListener
         score += 10;
         displayScore();
 
-//        if(countDownTimer != null)
-//        {
-//            countDownTimer.cancel();
-//            savedTimerView.setText("");
-//            countDownTimer = null;
-//        }
         sleep(duration);
     }
 
@@ -226,19 +218,6 @@ public class GuidedPlayActivity extends Activity implements CvCameraViewListener
         displayScore();
         timerView = (TextView) findViewById(R.id.timer);
         savedTimerView = timerView;
-
-//		imageView = (ImageView) findViewById(R.id.guidedImageView);
-//        imageView.setImageResource(R.drawable.puff_cow);
-//        imageView.setVisibility(View.VISIBLE);
-//		imageView.setBackgroundResource(R.drawable.start);
-//		imageView.post(new Runnable() {
-//			@Override
-//			public void run() {
-//				AnimationDrawable frameAnimation = (AnimationDrawable) imageView
-//						.getBackground();
-//				frameAnimation.start();
-//			}
-//		});
     }
 
     @Override
