@@ -10,7 +10,7 @@ android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
     defaultConfig {
-        applicationId "com.dominio.fabio.balldetectordemo"
+        applicationId "com.peets.socialplay.TreasureHuntApplication"
         minSdkVersion 14
         targetSdkVersion 21
         versionCode 1

@@ -46,8 +46,12 @@ public class TreasureHuntActivity extends Activity {
 	private PlayRingtoneTask pTask = null;
 	private long duration = 0;
 	private CheckExistingConnectionTask checkTask = null;
+    private static KeepLiveTask keepLiveTask = null;
 	
 	public static String CHATROOM = "chatRoom";
+
+
+    private Long myAccount = null;
 	/**
 	 * Called when the activity is first created. This is where we'll hook up
 	 * our views in XML layout files to our application.
@@ -60,6 +64,10 @@ public class TreasureHuntActivity extends Activity {
 		Log.e(TAG, "On create");
 		setContentView(R.layout.playdate);
 
+        if(keepLiveTask == null)
+            keepLiveTask = new KeepLiveTask();
+
+        keepLiveTask.execute((Void)null);
 
         chatRoom = "123456789";
 		// this is the button for a user to connect to a friend
@@ -170,6 +178,27 @@ public class TreasureHuntActivity extends Activity {
 		}
 	}
 
+    private class KeepLiveTask extends
+            AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            int count = 0;
+            while(count < 1) {
+                Boolean returnValue = SocialPlayRestServer.keepLive(myAccount);
+                Log.e(TAG, "keep live returns: " + returnValue);
+
+                // keep it constantly running in the background
+                sleep(30000);
+            }
+
+            return (Void) null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            Log.e(TAG, "KeepLiveTask onPostExecute received: " + result);
+        }
+    }
 	/**
 	 * the Async task to constantly poll whether there's an incoming connection
 	 *

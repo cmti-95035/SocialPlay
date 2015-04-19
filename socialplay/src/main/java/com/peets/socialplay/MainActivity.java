@@ -1,11 +1,13 @@
 package com.peets.socialplay;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -14,6 +16,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.CallbackManager;
 
 import com.peets.socialplay.R;
+import com.peets.socialplay.server.IdentityType;
 
 public class MainActivity extends FragmentActivity {
 
@@ -24,6 +27,8 @@ public class MainActivity extends FragmentActivity {
     private boolean isResumed = false;
     private AccessTokenTracker accessTokenTracker;
     private CallbackManager callbackManager;
+    private static String TAG ="MainActivity";
+    private Long accountId = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,17 +117,48 @@ public class MainActivity extends FragmentActivity {
 
         AccessToken token = AccessToken.getCurrentAccessToken();
         if (token != null) {
-            // if the user already logged in, proceed to the TreasureHunt screen
-            Intent intent = new Intent(getApplicationContext(), TreasureHuntActivity.class);
 
-            startActivity(intent);
+            RegisterTask registerTask = new RegisterTask();
 
+            //TODO: need a way to get user's name
+            registerTask.execute(token.getUserId(), "Susan");
         } else {
             // otherwise present the splash screen and ask the user to login,
             showFragment(SPLASH, false);
         }
     }
 
+    private class RegisterTask extends
+            AsyncTask<String, Void, Long> {
+        @Override
+        protected Long doInBackground(String... params) {
+            int count = 0;
+            while(count < 5) {
+                Long returnValue = SocialPlayRestServer.registerAccount(IdentityType.FB, params[0], params[1]);
+                if(returnValue != null) {
+                    Log.e(TAG, "keep live returns: " + returnValue);
+
+                    return returnValue;
+                }
+                count++;
+
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Long result) {
+            Log.e(TAG, "KeepLiveTask onPostExecute received: " + result);
+            accountId = result;
+
+            // if the user already logged in, proceed to the TreasureHunt screen
+            Intent intent = new Intent(getApplicationContext(), TreasureHuntRestActivity.class);
+
+            intent.putExtra(TreasureHuntRestActivity.ACCOUNTID, result);
+            startActivity(intent);
+        }
+    }
     private void showFragment(int fragmentIndex, boolean addToBackStack) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();

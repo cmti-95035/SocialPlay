@@ -13,6 +13,7 @@ import com.linkedin.restli.client.RestClient;
 import com.linkedin.restli.common.EmptyRecord;
 import com.peets.socialplay.server.SocialPlayBuilders;
 import com.peets.socialplay.server.SocialPlayContext;
+import com.peets.socialplay.server.ActivationBuilders;
 
 import org.json.JSONObject;
 
