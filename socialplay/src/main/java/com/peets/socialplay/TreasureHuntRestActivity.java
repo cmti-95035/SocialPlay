@@ -90,6 +90,7 @@ public class TreasureHuntRestActivity extends Activity {
                     Log.e(TAG, "OnClick buttons[0]");
 
                     buttons[0].setText(R.string.connecting);
+                    participantAccount = accountArray.get(0).getAccountId();
                     disableButtons();
                     inviteToPlay();
                 }
@@ -103,7 +104,8 @@ public class TreasureHuntRestActivity extends Activity {
                 public void onClick(View v) {
                     Log.e(TAG, "buttons[1] OnClick");
 
-                    buttons[0].setText(R.string.connecting);
+                    buttons[1].setText(R.string.connecting);
+                    participantAccount = accountArray.get(1).getAccountId();
                     disableButtons();
                     inviteToPlay();
                 }
@@ -118,6 +120,7 @@ public class TreasureHuntRestActivity extends Activity {
                     Log.e(TAG, "buttons[1] OnClick");
 
                     buttons[2].setText(R.string.connecting);
+                    participantAccount = accountArray.get(2).getAccountId();
                     disableButtons();
                     inviteToPlay();
                 }
@@ -187,7 +190,7 @@ public class TreasureHuntRestActivity extends Activity {
 
         if (keepLiveTask == null) {
             keepLiveTask = new KeepLiveTask();
-            keepLiveTask.execute((Void) null);
+            keepLiveTask.execute();
         }
     }
 
@@ -387,8 +390,7 @@ public class TreasureHuntRestActivity extends Activity {
      * user clicks a button so initiate the task to invite a friend to play
      */
     private void inviteToPlay() {
-        InviteToPlayTask inviteToPlayTask = new InviteToPlayTask();
-        inviteToPlayTask.execute();
+        new InviteToPlayTask().execute();
     }
 
     /**
