@@ -18,6 +18,7 @@ import com.peets.socialplay.server.AccountArray;
 import com.peets.socialplay.server.SocialPlayContext;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /*
  * the main activity to host the webRTC connectivity
@@ -91,7 +92,6 @@ public class TreasureHuntRestActivity extends Activity {
 
                     buttons[0].setText(R.string.connecting);
                     participantAccount = accountArray.get(0).getAccountId();
-                    disableButtons();
                     inviteToPlay();
                 }
             });
@@ -106,7 +106,6 @@ public class TreasureHuntRestActivity extends Activity {
 
                     buttons[1].setText(R.string.connecting);
                     participantAccount = accountArray.get(1).getAccountId();
-                    disableButtons();
                     inviteToPlay();
                 }
             });
@@ -117,11 +116,10 @@ public class TreasureHuntRestActivity extends Activity {
             buttons[2].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.e(TAG, "buttons[1] OnClick");
+                    Log.e(TAG, "buttons[2] OnClick");
 
                     buttons[2].setText(R.string.connecting);
                     participantAccount = accountArray.get(2).getAccountId();
-                    disableButtons();
                     inviteToPlay();
                 }
             });
@@ -130,6 +128,37 @@ public class TreasureHuntRestActivity extends Activity {
         imageView = (ImageView) findViewById(R.id.imageView1);
         imageView.setImageResource(R.drawable.invite);
         imageView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Async task to initiate a remote play invitation
+     */
+    private class InviteToPlayTask extends
+            AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String response = null;
+            int count = 0;
+            Log.e(TAG, "InviteToPlayTask doInBackground myAccount: " + myAccount);
+            Log.e(TAG, "InviteToPlayTask doInBackground participantAccount: " + participantAccount);
+            while (count < 3) {
+                response = SocialPlayRestServer.inviteToChat(myAccount, participantAccount);
+                if (response != null)
+                    break;      // find a chat room to invite the other party with
+                count++;
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            chatRoom = result;
+            Log.e(TAG, "InviteToPlayTask onPostExecute received: " + result);
+            Log.e(TAG, "will start CheckConnectionEstablishedTask");
+            CheckConnectionEstablishedTask checkConnectionEstablishedTask = new CheckConnectionEstablishedTask();
+            checkConnectionEstablishedTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
     }
 
     private void disableStrictMode() {
@@ -188,9 +217,20 @@ public class TreasureHuntRestActivity extends Activity {
             buttons[2].setEnabled(true);
         }
 
-        if (keepLiveTask == null) {
-            keepLiveTask = new KeepLiveTask();
-            keepLiveTask.execute();
+        if (keepLiveTask != null) {
+            keepLiveTask.cancel(true);
+        }
+        keepLiveTask = new KeepLiveTask();
+        keepLiveTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        if(!chatInProgress)
+        {
+            if(checkTask != null)
+            {
+                checkTask.cancel(true);
+            }
+            checkTask = new CheckExistingConnectionTask();
+            checkTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -236,37 +276,6 @@ public class TreasureHuntRestActivity extends Activity {
     }
 
     /**
-     * Async task to initiate a remote play invitation
-     */
-    private class InviteToPlayTask extends
-            AsyncTask<Void, Void, String> {
-        @Override
-        protected String doInBackground(Void... params) {
-            String response = null;
-            int count = 0;
-            while (count < 3) {
-                Log.e(TAG, "InviteToPlayTask doInBackground chatInProgress: "
-                        + chatInProgress);
-
-                response = SocialPlayRestServer.inviteToChat(myAccount, participantAccount);
-                if (response != null)
-                    break;      // find a chat room to invite the other party with
-                count++;
-            }
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            chatRoom = result;
-            Log.e(TAG, "InviteToPlayTask onPostExecute received: " + result);
-            Log.e(TAG, "will start CheckConnectionEstablishedTask");
-            CheckConnectionEstablishedTask checkConnectionEstablishedTask = new CheckConnectionEstablishedTask();
-            checkConnectionEstablishedTask.execute();
-        }
-    }
-
-    /**
      * the Async task to constantly poll whether there's an incoming connection
      */
     private class CheckExistingConnectionTask extends
@@ -295,13 +304,15 @@ public class TreasureHuntRestActivity extends Activity {
 
         @Override
         protected void onPostExecute(SocialPlayContext result) {
-            chatRoom = result.getChatRoomId();
-            Log.e(TAG, "CheckExistingConnectionTask onPostExecute received: " + result);
-            Log.e(TAG, "will start PlayRingtoneTask");
-            pTask = new PlayRingtoneTask();
-            pTask.execute();
-            alertConnection("Your friend invites you to a play date",
-                    "Accept?");
+            if(result != null && result.hasChatRoomId()) {
+                chatRoom = result.getChatRoomId();
+                Log.e(TAG, "CheckExistingConnectionTask onPostExecute received: " + result);
+                Log.e(TAG, "will start PlayRingtoneTask");
+                pTask = new PlayRingtoneTask();
+                pTask.execute();
+                alertConnection("Your friend invites you to a play date",
+                        "Accept?");
+            }
         }
     }
 
@@ -315,11 +326,12 @@ public class TreasureHuntRestActivity extends Activity {
             Boolean response = false;
             int count = 0;
             while (count < 10) {
-                Log.e(TAG,
-                        "CheckConnectionEstablishedTask doInBackground count: "
-                                + count);
+                Log.e(TAG, "CheckConnectionEstablishedTask doInBackground count: " + count);
+                Log.e(TAG, "CheckConnectionEstablishedTask doInBackground myAccount: " + myAccount);
+                Log.e(TAG, "CheckConnectionEstablishedTask doInBackground participantAccount: " + participantAccount);
+                Log.e(TAG, "CheckConnectionEstablishedTask doInBackground chatRoom: " + chatRoom);
 
-                response = SocialPlayRestServer.findParticipantJoined(myAccount, myAccount, chatRoom);
+                response = SocialPlayRestServer.findParticipantJoined(myAccount, participantAccount, chatRoom);
 
                 if (response != null && response)
                     return response;    // participant joined
@@ -390,7 +402,10 @@ public class TreasureHuntRestActivity extends Activity {
      * user clicks a button so initiate the task to invite a friend to play
      */
     private void inviteToPlay() {
-        new InviteToPlayTask().execute();
+        disableButtons();
+        chatInProgress = true;
+        InviteToPlayTask inviteToPlayTask = new InviteToPlayTask();
+        inviteToPlayTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**
@@ -457,6 +472,7 @@ public class TreasureHuntRestActivity extends Activity {
                             public void onClick(DialogInterface dialog,
                                                 int which) {
                                 dialog.dismiss();
+                                chatInProgress = false;
                             }
                         });
         AlertDialog alert = builder.create();
