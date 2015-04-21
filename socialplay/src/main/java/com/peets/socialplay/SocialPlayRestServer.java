@@ -11,11 +11,13 @@ import com.linkedin.restli.client.ResponseFuture;
 import com.linkedin.restli.client.RestClient;
 import com.linkedin.restli.common.EmptyRecord;
 import com.peets.socialplay.server.Account;
+import com.peets.socialplay.server.AccountArray;
 import com.peets.socialplay.server.ActivationBuilders;
 import com.peets.socialplay.server.Identity;
 import com.peets.socialplay.server.IdentityType;
 import com.peets.socialplay.server.RegistrationBuilders;
 import com.peets.socialplay.server.RegistrationCreateBuilder;
+import com.peets.socialplay.server.RegistrationDoFindOnlineFriendsBuilder;
 import com.peets.socialplay.server.RegistrationDoInviteBuilder;
 import com.peets.socialplay.server.RegistrationDoKeepLiveBuilder;
 import com.peets.socialplay.server.RegistrationDoRegisterAccountBuilder;
@@ -184,6 +186,13 @@ public class SocialPlayRestServer {
         return false;
     }
 
+    /**
+     * register a new user
+     * @param identityType
+     * @param identityStr
+     * @param userName
+     * @return
+     */
     public static Long registerAccount(IdentityType identityType, String identityStr, String userName)
     {
         try
@@ -197,6 +206,30 @@ public class SocialPlayRestServer {
             Response<Account> accountResponse = accountResponseFuture.getResponse();
 
             return accountResponse.getEntity().getAccountId();
+        }catch (RemoteInvocationException ex)
+        {
+            Log.e(TAG, "Encountered error doing registerAccount: " + ex.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * find out a list of online friends
+     * @param accountId
+     * @return
+     */
+    public static Account[] findOnlineFriends(Long accountId)
+    {
+        try
+        {
+            RegistrationDoFindOnlineFriendsBuilder registrationDoFindOnlineFriendsBuilder = registrationBuilders.actionFindOnlineFriends();
+
+            ActionRequest<AccountArray> actionRequest = registrationDoFindOnlineFriendsBuilder.paramAccountId(accountId).build();
+            ResponseFuture<AccountArray> accountResponseFuture = restClient.sendRequest(actionRequest);
+            Response<AccountArray> accountResponse = accountResponseFuture.getResponse();
+
+            return accountResponse.getEntity().toArray(new Account[0]);
         }catch (RemoteInvocationException ex)
         {
             Log.e(TAG, "Encountered error doing registerAccount: " + ex.getMessage());

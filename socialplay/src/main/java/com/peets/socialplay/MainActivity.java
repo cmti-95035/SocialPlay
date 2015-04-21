@@ -16,7 +16,11 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.CallbackManager;
 
 import com.peets.socialplay.R;
+import com.peets.socialplay.server.Account;
+import com.peets.socialplay.server.AccountArray;
 import com.peets.socialplay.server.IdentityType;
+
+import java.io.IOException;
 
 public class MainActivity extends FragmentActivity {
 
@@ -136,7 +140,7 @@ public class MainActivity extends FragmentActivity {
             while(count < 5) {
                 Long returnValue = SocialPlayRestServer.registerAccount(IdentityType.FB, params[0], params[1]);
                 if(returnValue != null) {
-                    Log.e(TAG, "keep live returns: " + returnValue);
+                    Log.e(TAG, "register task returns: " + returnValue);
 
                     return returnValue;
                 }
@@ -152,10 +156,59 @@ public class MainActivity extends FragmentActivity {
             Log.e(TAG, "KeepLiveTask onPostExecute received: " + result);
             accountId = result;
 
+            GetOnlineFriendsTask getOnlineFriendsTask = new GetOnlineFriendsTask();
+            getOnlineFriendsTask.execute(accountId);
+//            // if the user already logged in, proceed to the TreasureHunt screen
+//            Intent intent = new Intent(getApplicationContext(), TreasureHuntRestActivity.class);
+//
+//            intent.putExtra(TreasureHuntRestActivity.ACCOUNTID, result);
+//            startActivity(intent);
+        }
+    }
+
+    private class GetOnlineFriendsTask extends
+            AsyncTask<Long, Void, AccountArray> {
+        @Override
+        protected AccountArray doInBackground(Long... params) {
+            int count = 0;
+            while(count < 2) {
+                Account[] accounts = SocialPlayRestServer.findOnlineFriends(accountId);
+                if(accounts != null && accounts.length > 0) {
+                    Log.e(TAG, "GetOnlineFriendsTask returns: " + accounts.length);
+
+                    AccountArray accountArray = new AccountArray();
+                    for(int i = 0; i<accounts.length; i++)
+                        accountArray.add(accounts[i]);
+                    return accountArray;
+                }
+                count++;
+            }
+
+            return new AccountArray();
+        }
+
+        @Override
+        protected void onPostExecute(AccountArray result) {
+            Log.e(TAG, "KeepLiveTask onPostExecute received: " + result);
+
             // if the user already logged in, proceed to the TreasureHunt screen
             Intent intent = new Intent(getApplicationContext(), TreasureHuntRestActivity.class);
 
-            intent.putExtra(TreasureHuntRestActivity.ACCOUNTID, result);
+            intent.putExtra(TreasureHuntRestActivity.ACCOUNTID, accountId);
+            if(result != null && result.size()>0)
+            {
+                StringBuilder sb = new StringBuilder();
+                for(int i = 0 ; i < result.size(); i++)
+                {
+                    Account account = result.get(i);
+                    sb.append(account.getAccountId());
+                    sb.append(":");
+                    sb.append(account.getName());
+                    if(i != result.size() -1)
+                        sb.append(";");
+                }
+                intent.putExtra(TreasureHuntRestActivity.FRIENDS, sb.toString());
+            }
             startActivity(intent);
         }
     }
