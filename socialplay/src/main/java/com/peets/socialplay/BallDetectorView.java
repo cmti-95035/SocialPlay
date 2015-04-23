@@ -19,7 +19,7 @@ public class BallDetectorView extends JavaCameraView implements PictureCallback 
 
     public BallDetectorView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setCameraIndex(1);
+        setCameraIndex(0);
     }
 
     public List<String> getEffectList() {
