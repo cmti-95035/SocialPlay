@@ -423,7 +423,7 @@ public class GuidedPlayActivity extends Activity implements CvCameraViewListener
         }
 
         startActivity(new Intent(getApplicationContext(),
-                PlaydateActivity.class));
+                TreasureHuntRestActivity.class));
     }
 
     /**

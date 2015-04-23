@@ -44,7 +44,7 @@ public class TreasureHuntRestActivity extends Activity {
     public static String ACCOUNTID = "accountid";
     public static String FRIENDS = "friends";
     private static Long myAccount = null;
-    private Long participantAccount = 1234568L;
+    private Long participantAccount = null;
     private AccountArray accountArray = null;
 
     private AccountArray fromString(String friendsStr) {
@@ -306,6 +306,10 @@ public class TreasureHuntRestActivity extends Activity {
         protected void onPostExecute(SocialPlayContext result) {
             if(result != null && result.hasChatRoomId()) {
                 chatRoom = result.getChatRoomId();
+                // this is a little bit weird, as myAccount is the user himself
+                // but in the scenario of an incoming invitation myAccount is the invitee
+                // and the participantAccount is the invitor
+                participantAccount = result.getInitatorId();
                 Log.e(TAG, "CheckExistingConnectionTask onPostExecute received: " + result);
                 Log.e(TAG, "will start PlayRingtoneTask");
                 pTask = new PlayRingtoneTask();
@@ -373,7 +377,8 @@ public class TreasureHuntRestActivity extends Activity {
                         "updateParticipantJoinedTask doInBackground count: "
                                 + count);
 
-                response = SocialPlayRestServer.updateParticipantJoined(myAccount, myAccount, chatRoom, true);
+                // the current user is actually the invitee and participantAccount is the invitor
+                response = SocialPlayRestServer.updateParticipantJoined(participantAccount, myAccount, chatRoom, true);
 
                 if (response != null && response)
                     return response;    // update successful
@@ -391,8 +396,9 @@ public class TreasureHuntRestActivity extends Activity {
                 // remote party accepted, now go to the video chat
                 proceedToChat();
             } else {
-                Log.e(TAG, "onPostExecute show alert and back to start");
-                alert("Your friend didn't accept your invite", "Please try again!");
+                Log.e(TAG, "UpdateParticipantJoinedTask failed");
+                chatInProgress = false;
+                // go back to start
                 onStart();
             }
         }
@@ -412,6 +418,7 @@ public class TreasureHuntRestActivity extends Activity {
      * both parties are ready, proceed to chat
      */
     private void proceedToChat() {
+        chatInProgress = true;
         imageView.setImageResource(R.drawable.treasurehunt);
 
         Intent intent = new Intent(getApplicationContext(), TreasureHuntImageActivity.class);

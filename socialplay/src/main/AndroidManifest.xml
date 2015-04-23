@@ -27,6 +27,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.peets.socialplay.GuidedPlayActivity" android:label="@string/app_name"/>
+        <activity android:name="com.peets.socialplay.GuidedBallDetectionActivity" android:label="@string/app_name"/>
         <activity android:name="com.peets.socialplay.TreasureHuntRestActivity" android:label="@string/app_name"/>
         <activity android:name="com.peets.socialplay.TreasureHuntActivity" android:label="@string/app_name"
             android:screenOrientation="landscape"

@@ -68,7 +68,7 @@ public class TreasureHuntImageActivity extends Activity {
 	    
 		String chatRoom = intent.getStringExtra(TreasureHuntActivity.CHATROOM);
 		
-		intent = new Intent(getApplicationContext(), GuidedPlayActivity.class);
+		intent = new Intent(getApplicationContext(), GuidedBallDetectionActivity.class);
 		intent.putExtra(TreasureHuntActivity.CHATROOM, chatRoom);
 		startActivity(intent);
 	}
