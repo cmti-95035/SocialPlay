@@ -1,1 +1,1 @@
-include ':libraries/opencv',':socialplay'
+include ':libraries/opencv',':socialplay', ':backend'
