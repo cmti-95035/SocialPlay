@@ -21,6 +21,7 @@ import com.peets.socialplay.server.RegistrationDoFindOnlineFriendsBuilder;
 import com.peets.socialplay.server.RegistrationDoInviteBuilder;
 import com.peets.socialplay.server.RegistrationDoKeepLiveBuilder;
 import com.peets.socialplay.server.RegistrationDoRegisterAccountBuilder;
+import com.peets.socialplay.server.RegistrationDoRegisterAccountRequestBuilder;
 import com.peets.socialplay.server.SocialPlayBuilders;
 import com.peets.socialplay.server.SocialPlayContext;
 import com.peets.socialplay.server.SocialPlayCreateBuilder;
@@ -236,5 +237,22 @@ public class SocialPlayRestServer {
         }
 
         return null;
+    }
+
+    public static Boolean registerToGCM(Long accountId, String regId)
+    {
+        try
+        {
+            ActionRequest<Boolean> actionRequest = registrationBuilders.actionRegisterToGCM().paramAccountId(accountId).paramRegistrationId(regId).build();
+            ResponseFuture<Boolean> responseFuture = restClient.sendRequest(actionRequest);
+            Response<Boolean> response = responseFuture.getResponse();
+
+            return  response.getEntity();
+        }catch (RemoteInvocationException ex)
+        {
+            Log.e(TAG, "Encountered error doing registerAccount: " + ex.getMessage());
+        }
+
+        return false;
     }
 }
