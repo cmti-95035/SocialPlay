@@ -82,7 +82,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
-      <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -98,7 +97,6 @@
     <orderEntry type="library" exported="" name="jackson-mapper-asl-1.4.2" level="project" />
     <orderEntry type="library" exported="" name="commons-io-1.4" level="project" />
     <orderEntry type="library" exported="" name="log4j-1.2.16" level="project" />
-    <orderEntry type="library" exported="" name="SocialPlay-api-rest-client" level="project" />
     <orderEntry type="library" exported="" name="jackson-core-asl-1.4.2" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="li-jersey-uri-2.2.5" level="project" />
@@ -106,6 +104,8 @@
     <orderEntry type="library" exported="" name="parseq-1.3.6" level="project" />
     <orderEntry type="library" exported="" name="restli-client-2.2.5" level="project" />
     <orderEntry type="library" exported="" name="play-services-4.0.30" level="project" />
+    <orderEntry type="library" exported="" name="api-data-template" level="project" />
+    <orderEntry type="library" exported="" name="api-rest-client" level="project" />
     <orderEntry type="library" exported="" name="slf4j-log4j12-1.6.2" level="project" />
     <orderEntry type="library" exported="" name="slf4j-api-1.6.2" level="project" />
     <orderEntry type="library" exported="" name="javax.servlet-api-3.0.1" level="project" />
@@ -113,7 +113,6 @@
     <orderEntry type="library" exported="" name="data-transform-2.2.5" level="project" />
     <orderEntry type="library" exported="" name="facebook-android-sdk-4.0.0" level="project" />
     <orderEntry type="library" exported="" name="activation-1.1" level="project" />
-    <orderEntry type="library" exported="" name="SocialPlay-api-data-template" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="commons-lang-2.4" level="project" />
     <orderEntry type="library" exported="" name="codemodel-2.2" level="project" />

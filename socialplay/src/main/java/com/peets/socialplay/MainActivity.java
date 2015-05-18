@@ -20,9 +20,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.peets.socialplay.R;
-import com.peets.socialplay.server.Account;
-import com.peets.socialplay.server.AccountArray;
-import com.peets.socialplay.server.IdentityType;
+import com.antwish.povi.server.Account;
+import com.antwish.povi.server.AccountArray;
+import com.antwish.povi.server.IdentityType;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;

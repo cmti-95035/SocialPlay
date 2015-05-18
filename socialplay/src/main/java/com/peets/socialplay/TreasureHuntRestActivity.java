@@ -13,9 +13,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.peets.socialplay.server.Account;
-import com.peets.socialplay.server.AccountArray;
-import com.peets.socialplay.server.SocialPlayContext;
+import com.antwish.povi.server.Account;
+import com.antwish.povi.server.AccountArray;
+import com.antwish.povi.server.SocialPlayContext;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

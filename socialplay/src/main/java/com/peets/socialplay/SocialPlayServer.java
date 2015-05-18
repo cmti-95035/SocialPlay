@@ -11,9 +11,9 @@ import com.linkedin.restli.client.Response;
 import com.linkedin.restli.client.ResponseFuture;
 import com.linkedin.restli.client.RestClient;
 import com.linkedin.restli.common.EmptyRecord;
-import com.peets.socialplay.server.SocialPlayBuilders;
-import com.peets.socialplay.server.SocialPlayContext;
-import com.peets.socialplay.server.ActivationBuilders;
+import com.antwish.povi.server.SocialPlayBuilders;
+import com.antwish.povi.server.SocialPlayContext;
+import com.antwish.povi.server.ActivationBuilders;
 
 import org.json.JSONObject;
 
